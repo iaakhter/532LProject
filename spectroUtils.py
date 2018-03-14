@@ -26,7 +26,9 @@ def minMax():
 			if filename.endswith(".mp3"): 
 				#print (os.path.join(subdir, file))
 				audioFilename = os.path.join(subdir, file)
+
 				x, sr = librosa.load(audioFilename, sr=None, mono=True)
+
 				#Convert audio to a complex valued spectrogram
 				spectro = librosa.core.stft(x)
 
