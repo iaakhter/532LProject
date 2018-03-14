@@ -15,7 +15,7 @@ audioDirectory = "data/fma_small/"
 spectroSize = 224
 
 # find min and mix amplitude of spectro grams
-def minMax(duration=10):
+def minMax():
 	directory = "data/fma_small"
 
 	minAmp = float("inf")
@@ -26,7 +26,9 @@ def minMax(duration=10):
 			if filename.endswith(".mp3"): 
 				#print (os.path.join(subdir, file))
 				audioFilename = os.path.join(subdir, file)
-				x, sr = librosa.load(audioFilename, sr=None, mono=True, duration=duration)
+
+				x, sr = librosa.load(audioFilename, sr=None, mono=True)
+
 				#Convert audio to a complex valued spectrogram
 				spectro = librosa.core.stft(x)
 
