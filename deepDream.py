@@ -3,7 +3,7 @@
 
 import numpy as np
 import torch
-from dreamUtil import showtensor
+from dreamUtil import returnImg
 import scipy.ndimage as nd
 from torch.autograd import Variable
 
@@ -13,8 +13,11 @@ def objective_L2(dst, guide_features):
 
 
 def make_step(img, model, control=None, distance=objective_L2):
-    mean = np.array([0.485, 0.456, 0.406]).reshape([3, 1, 1])
-    std = np.array([0.229, 0.224, 0.225]).reshape([3, 1, 1])
+    #mean = np.array([0.485, 0.456, 0.406]).reshape([3, 1, 1])
+    #std = np.array([0.229, 0.224, 0.225]).reshape([3, 1, 1])
+    
+    mean = np.array([0.485]).reshape([1, 1, 1])
+    std = np.array([0.229]).reshape([1, 1, 1])
 
     learning_rate = 2e-2
     max_jitter = 32
@@ -42,8 +45,9 @@ def make_step(img, model, control=None, distance=objective_L2):
         img_variable.data.add_(img_variable.grad.data * learning_rate_use)
         img = img_variable.data.cpu().numpy()  # b, c, h, w
         img = np.roll(np.roll(img, -shift_x, -1), -shift_y, -2)
-        img[0, :, :, :] = np.clip(img[0, :, :, :], -mean / std,
-                                  (1 - mean) / std)
+        #print ("imgBefore", img.shape)
+        #img[0,:,:] = np.clip(img[0,:,:], -mean / std, (1 - mean) / std)
+        #print ("imgAfter", img.shape)
         '''if i == 0 or (i + 1) % show_every == 0:
             showtensor(img)'''
     return img
@@ -59,19 +63,28 @@ def dream(model,
     for i in range(octave_n - 1):
         octaves.append(
             nd.zoom(
-                octaves[-1], (1, 1, 1.0 / octave_scale, 1.0 / octave_scale),
+                octaves[-1], (1, 1.0 / octave_scale, 1.0 / octave_scale),
                 order=1))
 
+    #print ("shape of octave", octaves[-1].shape)
     detail = np.zeros_like(octaves[-1])
+    #print ("shape of detail", detail.shape)
     for octave, octave_base in enumerate(octaves[::-1]):
         h, w = octave_base.shape[-2:]
         if octave > 0:
             h1, w1 = detail.shape[-2:]
+            #print ("shape of detail", detail.shape)
+            #print ("h1 ", h1, "w1", w1)
             detail = nd.zoom(
-                detail, (1, 1, 1.0 * h / h1, 1.0 * w / w1), order=1)
+                detail, (1, 1.0 * h / h1, 1.0 * w / w1), order=1)
 
         input_oct = octave_base + detail
         print(input_oct.shape)
         out = make_step(input_oct, model, control, distance=distance)
+        #print("shape of out", out.shape)
         detail = out - octave_base
-    showtensor(out)
+    print ("out")
+    print (out)
+    #showtensor(out)
+    #out = returnImg(out)
+    return out

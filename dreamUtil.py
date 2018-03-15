@@ -13,12 +13,14 @@ def showarray(a, fmt='jpeg'):
     display(Image(data=f.getvalue()))
 
 
-def showtensor(a):
-    mean = np.array([0.485, 0.456, 0.406]).reshape([1, 1, 3])
-    std = np.array([0.229, 0.224, 0.225]).reshape([1, 1, 3])
-    inp = a[0, :, :, :]
-    inp = inp.transpose(1, 2, 0)
-    inp = std * inp + mean
+def returnImg(a):
+    mean = np.array([0.485]).reshape([1, 1, 1])
+    std = np.array([0.229]).reshape([1, 1, 1])
+    inp = a[0, :, :]
+    #inp = inp.transpose(1, 2, 0)
+    #inp = std * inp + mean
     inp *= 255
-    showarray(inp)
-    clear_output(wait=True)
+    inp = np.uint8(np.clip(inp, 0, 255))
+    #showarray(inp)
+    #clear_output(wait=True)
+    return inp
