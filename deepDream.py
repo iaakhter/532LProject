@@ -16,10 +16,10 @@ def make_step(img, model, control=None, distance=objective_L2):
     #mean = np.array([0.485, 0.456, 0.406]).reshape([3, 1, 1])
     #std = np.array([0.229, 0.224, 0.225]).reshape([3, 1, 1])
     
-    mean = np.array([0.485]).reshape([1, 1, 1])
+    mean = np.array([150]).reshape([1, 1, 1])
     std = np.array([0.229]).reshape([1, 1, 1])
 
-    learning_rate = 2e-2
+    learning_rate = 0.5
     max_jitter = 32
     num_iterations = 20
     show_every = 10
@@ -42,12 +42,15 @@ def make_step(img, model, control=None, distance=objective_L2):
         act_value.backward(diff_out)
         ratio = np.abs(img_variable.grad.data.cpu().numpy()).mean()
         learning_rate_use = learning_rate / ratio
+        print ("ratio", ratio)
+        print ("learning_rate_use", learning_rate_use)
         img_variable.data.add_(img_variable.grad.data * learning_rate_use)
         img = img_variable.data.cpu().numpy()  # b, c, h, w
         img = np.roll(np.roll(img, -shift_x, -1), -shift_y, -2)
-        #print ("imgBefore", img.shape)
-        #img[0,:,:] = np.clip(img[0,:,:], -mean / std, (1 - mean) / std)
-        #print ("imgAfter", img.shape)
+        print ("imgBefore", img)
+        #bias = np.mean(img)
+        img[0,:,:] = np.clip(img[0,:,:], 0, 255)
+        print ("imgAfter", img.shape)
         '''if i == 0 or (i + 1) % show_every == 0:
             showtensor(img)'''
     return img
