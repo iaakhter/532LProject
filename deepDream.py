@@ -6,6 +6,7 @@ import torch
 from dreamUtil import returnImg
 import scipy.ndimage as nd
 from torch.autograd import Variable
+import torch.nn as nn
 
 
 def objective_L2(dst, guide_features):
@@ -19,7 +20,7 @@ def make_step(img, model, control=None, distance=objective_L2):
     mean = np.array([150]).reshape([1, 1, 1])
     std = np.array([0.229]).reshape([1, 1, 1])
 
-    learning_rate = 0.5
+    learning_rate = 0.6
     max_jitter = 32
     num_iterations = 20
     show_every = 10
@@ -61,13 +62,21 @@ def dream(model,
           octave_n=6,
           octave_scale=1.4,
           control=None,
-          distance=objective_L2):
+          distance=objective_L2,layerNumber = 3):
+    
+    layerRemoval = 2 + (4 - layerNumber)
+    children = list(model.children())[-layerRemoval:-1]
+    model = nn.Sequential(*list(model.children())[:-layerRemoval])
+    
+    print ("model after removing", len(list(model.children())))
+    
     octaves = [base_img]
     for i in range(octave_n - 1):
         octaves.append(
             nd.zoom(
                 octaves[-1], (1, 1.0 / octave_scale, 1.0 / octave_scale),
                 order=1))
+        
 
     #print ("shape of octave", octaves[-1].shape)
     detail = np.zeros_like(octaves[-1])
@@ -90,4 +99,6 @@ def dream(model,
     print (out)
     #showtensor(out)
     #out = returnImg(out)
+    model = nn.Sequential(*list(model.children()) + children)
+    print ("model after adding", len(list(model.children())))
     return out

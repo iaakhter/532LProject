@@ -109,7 +109,11 @@ def loadSpectro(trackIdNum, spectroSize, minAmp, maxAmp, trackDuration = 10, sta
 		#Get the decibal version from power spectrogram
 		#This is the value that should be stored for training
 		powerToDb = librosa.power_to_db(mag, ref=np.max)
-		scaledSpectro = scaleSpectro(powerToDb, (spectroSize, spectroSize), minAmp, maxAmp)
+		if spectroSize is None:
+			spectroSize = powerToDb.shape
+		else:
+			spectroSize = (spectroSize, spectroSize)
+		scaledSpectro = scaleSpectro(powerToDb, spectroSize, minAmp, maxAmp)
 		spectroTensor = torch.from_numpy(scaledSpectro).type(torch.DoubleTensor)
 		spectroVar = Variable(spectroTensor).unsqueeze(0)
 		return spectroVar, phase, powerToDb.shape
