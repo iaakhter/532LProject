@@ -20,7 +20,7 @@ def make_step(img, model, control=None, distance=objective_L2):
     mean = np.array([150]).reshape([1, 1, 1])
     std = np.array([0.229]).reshape([1, 1, 1])
 
-    learning_rate = 0.6
+    learning_rate = 0.4
     max_jitter = 32
     num_iterations = 20
     show_every = 10
@@ -66,7 +66,7 @@ def dream(model,
     
     layerRemoval = 2 + (4 - layerNumber)
     children = list(model.children())[-layerRemoval:-1]
-    model = nn.Sequential(*list(model.children())[:-layerRemoval])
+    #model = nn.Sequential(*list(model.children())[:-layerRemoval])
     
     print ("model after removing", len(list(model.children())))
     
@@ -99,6 +99,6 @@ def dream(model,
     print (out)
     #showtensor(out)
     #out = returnImg(out)
-    model = nn.Sequential(*list(model.children()) + children)
+    #model = nn.Sequential(*list(model.children()) + children)
     print ("model after adding", len(list(model.children())))
     return out
