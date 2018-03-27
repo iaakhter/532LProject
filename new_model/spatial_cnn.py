@@ -41,8 +41,8 @@ def main():
     data_loader = spatial_dataloader(
                         BATCH_SIZE=arg.batch_size,
                         num_workers=8,
-                        train_list ='/ubc/cs/research/tracking-raid/candice/project/dataset/mag_512/lists/new_train_list.txt',
-                        test_list = '/ubc/cs/research/tracking-raid/candice/project/dataset/mag_512/lists/new_val_list.txt',
+                        train_list ='/ubc/cs/research/tracking-raid/candice/project/dataset/mag_512/lists/train_list.txt',
+                        test_list = '/ubc/cs/research/tracking-raid/candice/project/dataset/mag_512/lists/val_list.txt',
                         )
     
     train_loader, test_loader, test_video = data_loader.run()
@@ -78,7 +78,7 @@ class Spatial_CNN():
         print ('==> Build model and setup loss and optimizer')
         #build model
         #self.model = resnet(pretrained=False, channel=1, num_classes=arg.num_classes).cuda()
-        self.model = simplenet(channel=1, num_classes=arg.num_classes).cuda()
+        self.model = resnet18(channel=1, num_classes=arg.num_classes).cuda()
         #Loss function and optimizer
         self.criterion = nn.CrossEntropyLoss().cuda()
         self.optimizer = torch.optim.SGD(self.model.parameters(), self.lr, momentum=0.9)
@@ -142,8 +142,6 @@ class Spatial_CNN():
         # mini-batch training
         progress = tqdm(self.train_loader)
         for i, (data,label) in enumerate(progress):
-
-    
             # measure data loading time
             data_time.update(time.time() - end)
             

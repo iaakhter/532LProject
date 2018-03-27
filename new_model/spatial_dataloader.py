@@ -21,8 +21,9 @@ class spatial_dataset(Dataset):
 
         img = Image.open(video_name)
         img = img.convert('L')
-        img = img.crop((0, 0, 12, 128))
+        #img = img.crop((0, 0, 12, 128))
         #raise Exception("print shape")
+
         transformed_img = self.transform(img)
         img.close()
 
@@ -88,7 +89,7 @@ class spatial_dataloader():
 
     def train(self):
         training_set = spatial_dataset(dic=self.train_video, mode='train', transform = transforms.Compose([
-                #transforms.Scale([224,224]),
+                #transforms.Scale(224),
                 #transforms.RandomCrop(224),
                 #transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
@@ -106,7 +107,7 @@ class spatial_dataloader():
 
     def validate(self):
         validation_set = spatial_dataset(dic=self.test_video, mode='val', transform = transforms.Compose([
-                #transforms.Scale([224,224]),
+                #transforms.Scale(224),
                 transforms.ToTensor(),
                 #transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])
                 ]))
