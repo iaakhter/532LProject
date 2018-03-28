@@ -10,7 +10,7 @@ class spatial_dataset(Dataset):
     def __init__(self, dic, mode, transform=None):
  
         self.keys = dic.keys()
-        self.values=dic.values()
+        self.values = dic.values()
         self.mode = mode
         self.transform = transform
 
@@ -21,8 +21,6 @@ class spatial_dataset(Dataset):
 
         img = Image.open(video_name)
         img = img.convert('L')
-        #img = img.crop((0, 0, 12, 128))
-        #raise Exception("print shape")
 
         transformed_img = self.transform(img)
         img.close()
@@ -121,15 +119,3 @@ class spatial_dataloader():
             shuffle=False,
             num_workers=self.num_workers)
         return val_loader
-
-
-
-
-
-#if __name__ == '__main__':
-#    
-#    dataloader = spatial_dataloader(BATCH_SIZE=1, num_workers=1, 
-#                                path='/home/ubuntu/data/UCF101/spatial_no_sampled/', 
-#                                #ucf_list='/home/ubuntu/cvlab/pytorch/ucf101_two_stream/github/UCF_list/',
-#                                ucf_split='01')
-#    train_loader,val_loader,test_video = dataloader.run()
