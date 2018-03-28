@@ -50,7 +50,7 @@ def make_step(img, model, control=None, distance=objective_L2):
         img = np.roll(np.roll(img, -shift_x, -1), -shift_y, -2)
         print ("imgBefore", img)
         #bias = np.mean(img)
-        img[0,:,:] = np.clip(img[0,:,:], 0, 255)
+        img[0,0,:,:] = np.clip(img[0,0,:,:], 0, 255)
         print ("imgAfter", img.shape)
         '''if i == 0 or (i + 1) % show_every == 0:
             showtensor(img)'''
@@ -74,7 +74,7 @@ def dream(model,
     for i in range(octave_n - 1):
         octaves.append(
             nd.zoom(
-                octaves[-1], (1, 1.0 / octave_scale, 1.0 / octave_scale),
+                octaves[-1], (1, 1, 1.0 / octave_scale, 1.0 / octave_scale),
                 order=1))
         
 
@@ -88,7 +88,7 @@ def dream(model,
             #print ("shape of detail", detail.shape)
             #print ("h1 ", h1, "w1", w1)
             detail = nd.zoom(
-                detail, (1, 1.0 * h / h1, 1.0 * w / w1), order=1)
+                detail, (1, 1, 1.0 * h / h1, 1.0 * w / w1), order=1)
 
         input_oct = octave_base + detail
         print(input_oct.shape)
