@@ -41,11 +41,12 @@ def main():
     data_loader = spatial_dataloader(
                         BATCH_SIZE=arg.batch_size,
                         num_workers=8,
-                        train_list ='/ubc/cs/research/tracking-raid/candice/project/dataset/mag_512/lists/train_list.txt',
-                        test_list = '/ubc/cs/research/tracking-raid/candice/project/dataset/mag_512/lists/val_list.txt',
+                        train_list ='/ubc/cs/research/tracking-raid/candice/project/dataset/phase_512/lists/train_list.txt',
+                        test_list = '/ubc/cs/research/tracking-raid/candice/project/dataset/phase_512/lists/val_list.txt',
                         )
     
     train_loader, test_loader, test_video = data_loader.run()
+    
     #Model 
     model = Spatial_CNN(
                         nb_epochs=arg.epochs,
@@ -127,7 +128,7 @@ class Spatial_CNN():
                 'state_dict': self.model.state_dict(),
                 'best_prec1': self.best_prec1,
                 'optimizer' : self.optimizer.state_dict()
-            },is_best,'checkpoints/checkpoint.pth.tar','checkpoints/model_best.pth.tar')
+            },is_best,'checkpoints_phase/checkpoint.pth.tar','checkpoints_phase/model_best.pth.tar')
 
     def train_1epoch(self):
         print('==> Epoch:[{0}/{1}][training stage]'.format(self.epoch, self.nb_epochs))
@@ -178,7 +179,7 @@ class Spatial_CNN():
                 'Prec@5':[round(top5.avg,4)],
                 'lr': self.optimizer.param_groups[0]['lr']
                 }
-        record_info(info, 'checkpoints/rgb_train.csv','train')
+        record_info(info, 'checkpoints_phase/rgb_train.csv','train')
 
     def validate_1epoch(self):
         print('==> Epoch:[{0}/{1}][validation stage]'.format(self.epoch, self.nb_epochs))
@@ -220,7 +221,7 @@ class Spatial_CNN():
                 'Loss':[round(video_loss,5)],
                 'Prec@1':[round(video_top1,3)],
                 'Prec@5':[round(video_top5,3)]}
-        record_info(info, 'checkpoints/rgb_test.csv','test')
+        record_info(info, 'checkpoints_phase/rgb_test.csv','test')
         return video_top1, video_loss
 
     def frame2_video_level_accuracy(self):
