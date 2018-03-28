@@ -56,11 +56,23 @@ def scaleSpectro(x, new_size, minAmp, maxAmp):
 	y = scipy.misc.imresize(x, new_size, mode='L', interp='nearest')
 	return y
 
+def scalePhase(x, new_size, minAmp, maxAmp):
+	x = (x - minAmp)/(maxAmp - minAmp)
+	#print ("after scaling", x)
+	y = scipy.misc.imresize(x, new_size, mode='L', interp='nearest')
+	return y
+
 def unscaleSpectro(x, new_size, minAmp, maxAmp):
 	x = scipy.misc.imresize(x, new_size, mode='L', interp='nearest')
 	x = x/255.0
 	x = minAmp + x*(maxAmp - minAmp)
 	x = librosa.core.db_to_power(x)
+	return x
+
+def unscalePhase(x, new_size, minAmp, maxAmp):
+	x = scipy.misc.imresize(x, new_size, mode='L', interp='nearest')
+	x = x/255.0
+	x = minAmp + x*(maxAmp - minAmp)
 	return x
 
 # return the first genreId of a track (a track can have multiple genres)
